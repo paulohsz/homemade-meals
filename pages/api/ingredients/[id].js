@@ -1,5 +1,5 @@
-import dbConnect from '../../../src/utils/dbConnect';
-import Ingredient from '../../../src/models/Ingredient';
+import dbConnect from '../../../src/api/utils/dbConnect';
+import Ingredient from '../../../src/api/models/Ingredient';
 
 // eslint-disable-next-line consistent-return
 export default async function handler(req, res) {

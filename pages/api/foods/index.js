@@ -1,7 +1,7 @@
-import dbConnect from '../../../src/utils/dbConnect';
-import Food from '../../../src/models/Food';
+import dbConnect from '../../../src/api/utils/dbConnect';
+import Food from '../../../src/api/models/Food';
 // eslint-disable-next-line no-unused-vars
-import Ingredient from '../../../src/models/Ingredient';
+import Ingredient from '../../../src/api/models/Ingredient';
 
 export default async function handler(req, res) {
   const { method } = req;
