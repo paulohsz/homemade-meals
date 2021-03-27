@@ -9,7 +9,7 @@ const MealSchema = new Schema({
     maxlength: [60, 'Name cannot be more than 60 characters'],
   },
   ingredients: [{
-    ingredients: {
+    ingredient: {
       type: Schema.Types.ObjectId,
       ref: 'Ingredient',
     },
@@ -17,6 +17,14 @@ const MealSchema = new Schema({
       type: Number,
     },
   }],
+  foods: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Food',
+  }],
+  observation: {
+    /* The observation of this meal */
+    type: String,
+  },
 },
 {
   timestamps: true,

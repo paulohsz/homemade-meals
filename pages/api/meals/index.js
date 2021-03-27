@@ -2,6 +2,8 @@ import dbConnect from '../../../src/utils/dbConnect';
 import Meal from '../../../src/models/Meal';
 // eslint-disable-next-line no-unused-vars
 import Ingredient from '../../../src/models/Ingredient';
+// eslint-disable-next-line no-unused-vars
+import Food from '../../../src/models/Food';
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -11,7 +13,9 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const meals = await Meal.find({}).populate({ path: 'ingredients.ingredients' }); /* find all the data in our database */
+        const meals = await Meal.find({})
+          .populate({ path: 'ingredients.ingredient' })
+          .populate({ path: 'foods', populate: 'ingredients.ingredient' }); /* find all the data in our database */
         res.status(200).json({ success: true, data: meals });
       } catch (error) {
         res.status(400).json({ success: false, error });

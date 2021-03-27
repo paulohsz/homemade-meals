@@ -8,7 +8,7 @@ const IngredientSchema = new mongoose.Schema({
     required: [true, 'Please provide a name for this ingredient.'],
     maxlength: [60, 'Name cannot be more than 60 characters'],
   },
-  base_unit: {
+  baseUnit: {
     /* The base unit of your ingredient */
     type: String,
     required: [true, 'Please specify the base unit of your ingredient.'],
