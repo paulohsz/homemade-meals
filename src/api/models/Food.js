@@ -5,6 +5,7 @@ const FoodSchema = new Schema({
   name: {
     /* The name of this food */
     type: String,
+    unique: true,
     required: [true, 'Please provide a name for this food.'],
     maxlength: [60, 'Name cannot be more than 60 characters'],
   },

@@ -5,6 +5,7 @@ const IngredientSchema = new mongoose.Schema({
   name: {
     /* The name of this ingredient */
     type: String,
+    unique: true,
     required: [true, 'Please provide a name for this ingredient.'],
     maxlength: [60, 'Name cannot be more than 60 characters'],
   },

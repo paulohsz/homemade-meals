@@ -5,6 +5,7 @@ const MealSchema = new Schema({
   name: {
     /* The name of this meal */
     type: String,
+    unique: true,
     required: [true, 'Please provide a name for this meal.'],
     maxlength: [60, 'Name cannot be more than 60 characters'],
   },
@@ -13,7 +14,7 @@ const MealSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Ingredient',
     },
-    value: {
+    quantity: {
       type: Number,
     },
   }],
