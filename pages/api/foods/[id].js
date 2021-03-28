@@ -47,9 +47,6 @@ export default async function handler(req, res) {
         if (!delFood) {
           return res.status(400).json({ success: false });
         }
-        if (!delFood) {
-          return res.status(400).json({ success: false });
-        }
         if (delFood.deletedCount === 0) {
           return res.status(200).json({ success: true, data: {}, error: `Not found! ID_FOOD: ${id}` });
         }

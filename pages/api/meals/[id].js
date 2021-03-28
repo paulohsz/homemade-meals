@@ -15,7 +15,9 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET': /* Get a model by its ID */
       try {
-        const meal = await Meal.findById(id).populate({ path: 'ingredients.ingredient' });
+        const meal = await Meal.findById(id)
+          .populate({ path: 'ingredients.ingredient' })
+          .populate({ path: 'foods', populate: 'ingredients.ingredient' });
         if (!meal) {
           return res.status(400).json({ success: false, error: `Not found! ID_MEAL: ${id}` });
         }
@@ -33,7 +35,7 @@ export default async function handler(req, res) {
         });
 
         if (!meal) {
-          return res.status(400).json({ success: false, meal });
+          return res.status(400).json({ success: false, data: meal });
         }
         res.status(200).json({ success: true, data: meal });
       } catch (error) {
@@ -44,9 +46,6 @@ export default async function handler(req, res) {
     case 'DELETE': /* Delete a model by its ID */
       try {
         const delmeal = await Meal.deleteOne({ _id: id });
-        if (!delmeal) {
-          return res.status(400).json({ success: false });
-        }
         if (!delmeal) {
           return res.status(400).json({ success: false });
         }

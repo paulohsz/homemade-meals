@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         });
 
         if (!ingredient) {
-          return res.status(400).json({ success: false, ingredient });
+          return res.status(400).json({ success: false, data: ingredient });
         }
         res.status(200).json({ success: true, data: ingredient });
       } catch (error) {
@@ -42,9 +42,6 @@ export default async function handler(req, res) {
     case 'DELETE': /* Delete a model by its ID */
       try {
         const delIngredient = await Ingredient.deleteOne({ _id: id });
-        if (!delIngredient) {
-          return res.status(400).json({ success: false });
-        }
         if (!delIngredient) {
           return res.status(400).json({ success: false });
         }
