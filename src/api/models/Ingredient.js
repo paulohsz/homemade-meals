@@ -30,6 +30,10 @@ const IngredientSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide a value for this ingredient.'],
   },
+  observation: {
+    /* The observation of your ingredient */
+    type: String,
+  },
 },
 {
   timestamps: true,
