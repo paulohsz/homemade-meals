@@ -53,6 +53,11 @@ export const colors = {
       color: '#070C0E',
     },
   },
+  standards: {
+    error: {
+      color: '#FF0000',
+    },
+  },
 };
 
 export const breakpoints = {
