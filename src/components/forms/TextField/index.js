@@ -4,9 +4,18 @@ import PropTypes from 'prop-types';
 import Text from '../../foundation/Text';
 
 const InputWrapper = styled.div`
-  margin-bottom: 17px;
+  margin-bottom: 3px;
 `;
-
+const ErrorValidation = styled(Text)`
+margin-top: 3px;
+margin-left: 20px;
+  display: block;
+  height: 15px;
+`;
+ErrorValidation.defaultProps = {
+  variant: 'smallestException',
+  color: 'test.error',
+};
 const Input = styled(Text)`
   
   width: 100%;
@@ -42,22 +51,26 @@ export default function TextField({
         value={value}
         error={error}
       />
-      {error && (
-        <div>{helperText}</div>
-      )}
+      <ErrorValidation>
+        {helperText}
+        {' '}
+        {' '}
+
+      </ErrorValidation>
     </InputWrapper>
   );
 }
 TextField.defaultProps = {
   error: false,
   helperText: '',
+  onBlur: () => {},
 };
 TextField.propTypes = {
   placeholder: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  onBlur: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
+  onBlur: PropTypes.func,
   error: PropTypes.bool,
   helperText: PropTypes.string,
 };
