@@ -10,7 +10,7 @@
     "commit": "cz"
   },
   "dependencies": {
-    "formik": "^2.2.6",
+    "formik": "^2.2.9",
     "lodash": "^4.17.21",
     "mongoose": "^5.12.7",
     "next": "^10.2.0",
