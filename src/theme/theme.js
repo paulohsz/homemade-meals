@@ -1,3 +1,4 @@
+import { createTheme } from '@material-ui/core/styles';
 import typographyVariants from './typographyVariants';
 
 export const colors = {
@@ -74,5 +75,20 @@ export default {
   breakpoints,
   borderRadius: '16px',
   transition: '200ms ease-in-out',
-  fontFamily: '\'Alegreya Sans\', sans-serif',
+  ...createTheme({
+    palette: {
+      primary: {
+        light: '#63a4ff',
+        main: '#1976d2',
+        dark: '#004ba0',
+        contrastText: '#fff',
+      },
+      secondary: {
+        light: '#48a999',
+        main: '#00695c',
+        dark: '#004c40',
+        contrastText: '#fff',
+      },
+    },
+  }),
 };
