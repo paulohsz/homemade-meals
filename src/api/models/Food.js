@@ -15,9 +15,9 @@ const FoodSchema = new Schema({
       ref: 'Ingredient',
       required: [true, 'Please provide a name for this food.'],
     },
-    value: {
+    quantity: {
       type: Number,
-      required: [true, 'Please provide a name for this food.'],
+      required: [true, 'Please provide a quantity for this food.'],
     },
   }],
   coccao: {

@@ -25,10 +25,10 @@ const IngredientSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Please provide a quantity for this ingredient.'],
   },
-  value: {
+  price: {
     /* The type of your ingredient */
     type: Number,
-    required: [true, 'Please provide a value for this ingredient.'],
+    required: [true, 'Please provide a price for this ingredient.'],
   },
   observation: {
     /* The observation of your ingredient */
