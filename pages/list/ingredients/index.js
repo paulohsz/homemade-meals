@@ -1,5 +1,5 @@
-/* eslint-disable arrow-body-style */
 import React, { useEffect, useState } from 'react';
+import { getSession } from 'next-auth/client';
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import { ingredientDelete } from '../../../src/services/ingredientsService';
 import Loading from '../../../src/components/commons/Loading';
 import DialogDelete from '../../../src/components/commons/dialog/dialogDelete';
 
+// eslint-disable-next-line arrow-body-style
 const GridRow = styled(Grid)(({ theme }) => {
   return {
     borderRadius: theme.shape.borderRadius * 2,
@@ -280,3 +281,18 @@ function Ingredients() {
 }
 
 export default withRouter(Ingredients);
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  // if no session found(user hasn’t logged in)
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/', // redirect user to homepage
+        permanent: false,
+      },
+    };
+  }
+
+  return {};
+}
