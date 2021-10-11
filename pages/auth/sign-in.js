@@ -61,10 +61,41 @@ export default function SignIn() {
       }
     },
   });
+
+  function getWindowDimensions() {
+    const hasWindow = typeof window !== 'undefined';
+    const width = hasWindow ? window.innerWidth : null;
+    const height = hasWindow ? window.innerHeight : null;
+    return {
+      width,
+      height,
+    };
+  }
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+    const hasWindow = typeof window !== 'undefined';
+    if (hasWindow) {
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, []);
+
   return (
-    <Box display="flex" flexDirection="column" justifyContent="center" height="100vh">
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      height={windowDimensions.height < (message.error ? 465 : 391) ? 'auto' : '100vh'}
+    >
       <Container maxWidth="xs">
-        <Paper elevation={5} sx={{ p: 2, borderRadius: 4 }}>
+        <Paper elevation={5} sx={{ p: 2, my: 2, borderRadius: 4 }}>
           <form id="form-signin" onSubmit={formik.handleSubmit}>
             <Grid spacing={3} container>
               <Grid xs={12} sx={{ textAlign: 'center' }} item>
