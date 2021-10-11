@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { withRouter } from 'next/router';
+import { signOut } from 'next-auth/client';
+import PropTypes from 'prop-types';
 import {
   AppBar,
   Toolbar,
@@ -13,31 +16,46 @@ import {
   Divider,
   ListItemIcon,
   Hidden,
+  Menu as MenuMUI,
+  MenuItem,
 } from '@mui/material';
-import { Logout, Menu as MenuIcon } from '@mui/icons-material';
-import { withRouter } from 'next/router';
-import PropTypes from 'prop-types';
+import { AccountCircle, Logout, Menu as MenuIcon } from '@mui/icons-material';
 
 function Menu({ router }) {
-  const { pathname } = router;
+  const { pathname, push } = router;
 
   const menu = [
     { label: 'Ingredients', value: '/list/ingredients' },
-    { label: 'Item Two', value: 1 },
-    { label: 'Item Three', value: 2 },
+    { label: 'About', value: '/about' },
   ];
 
-  const [menuActive, setMenuActive] = useState(menu[0].value);
+  const [menuActive, setMenuActive] = useState(false);
   const [menuSm, setMenuSm] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const profileOpen = Boolean(anchorEl);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
-    setMenuActive(pathname);
-  }, []);
+    if (menu.find((element) => element.value === pathname) !== undefined) {
+      setMenuActive(pathname);
+    }
+  }, [pathname]);
 
-  const handleChange = (event, newValue) => {
-    // console.log(event, newValue);
-    console.log(newValue);
-    setMenuActive(newValue);
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const clickIcon = (value) => {
+    push(value);
+    setMenuActive(value);
+    setMenuSm(false);
+  };
+
+  const handleChangeTab = (event, newValue) => {
+    clickIcon(newValue);
   };
 
   const toggleDrawer = (open) => (event) => {
@@ -48,14 +66,7 @@ function Menu({ router }) {
     ) {
       return;
     }
-    console.log('toggleDrawer', open);
     setMenuSm(open);
-  };
-
-  const clickIcon = (value) => {
-    console.log('clickIcon', value);
-    setMenuActive(value);
-    setMenuSm(false);
   };
 
   const list = () => (
@@ -69,7 +80,7 @@ function Menu({ router }) {
           <ListItem
             button
             key={item.label}
-            onClick={() => clickIcon(item.value)}
+            onClick={() => { clickIcon(item.value); }}
           >
             <ListItemText
               primary={item.label}
@@ -80,19 +91,11 @@ function Menu({ router }) {
           </ListItem>
         ))}
       </List>
-      <Divider />
-      <List>
-        <ListItem button>
-          <ListItemIcon>
-            <Logout />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItem>
-      </List>
     </Box>
   );
 
   return (
+    pathname !== '/auth/sign-in' && pathname !== '/' && (
     <>
       <Box
         sx={{
@@ -103,15 +106,31 @@ function Menu({ router }) {
         }}
       >
         <Hidden only="xs">
-          <Tabs value={menuActive} onChange={handleChange} centered>
-            {menu.map((item) => (
+          <Tabs value={menuActive} onChange={handleChangeTab} centered>
+            {menu.map((item, index) => (
               <Tab
                 sx={{ px: 4, py: 3 }}
-                key={`menu_${item.value}`}
+                key={`menu_${index}_${item.value}`} // eslint-disable-line react/no-array-index-key
                 label={item.label}
                 value={item.value}
               />
             ))}
+            <Box sx={{
+              position: 'absolute',
+              right: 0,
+              mt: 1,
+              pr: 3,
+            }}
+            >
+              <IconButton
+                size="large"
+                edge="end"
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+              >
+                <AccountCircle />
+              </IconButton>
+            </Box>
           </Tabs>
         </Hidden>
         <Hidden smUp>
@@ -126,6 +145,16 @@ function Menu({ router }) {
               >
                 <MenuIcon />
               </IconButton>
+              <Box sx={{ flexGrow: 1 }} />
+              <IconButton
+                size="large"
+                edge="end"
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
             </Toolbar>
           </AppBar>
           <SwipeableDrawer
@@ -137,7 +166,27 @@ function Menu({ router }) {
           </SwipeableDrawer>
         </Hidden>
       </Box>
+      <MenuMUI
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={profileOpen}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <Divider />
+        <MenuItem onClick={async () => { await signOut({ redirect: false }); push('/auth/sign-in'); handleClose(); }}>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Sign Out" />
+        </MenuItem>
+      </MenuMUI>
     </>
+    )
   );
 }
 
@@ -146,5 +195,6 @@ export default withRouter(Menu);
 Menu.propTypes = {
   router: PropTypes.shape({
     pathname: PropTypes.string.isRequired,
+    push: PropTypes.func.isRequired,
   }).isRequired,
 };

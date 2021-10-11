@@ -3,6 +3,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import { Provider } from 'next-auth/client';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { CacheProvider } from '@emotion/react';
@@ -20,28 +21,30 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
   axios.defaults.baseURL = 'http://localhost:3000';
 
   return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <title>My page</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <SnackbarProvider
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          maxSnack={3}
-        >
-          <IngredientsProvider>
-            <Menu />
-            <Component {...pageProps} />
-          </IngredientsProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </CacheProvider>
+    <Provider session={pageProps.session}>
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>My page</title>
+          <meta name="viewport" content="initial-scale=1, width=device-width" />
+        </Head>
+        <ThemeProvider theme={theme}>
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <CssBaseline />
+          <SnackbarProvider
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            maxSnack={3}
+          >
+            <IngredientsProvider>
+              <Menu />
+              <Component {...pageProps} />
+            </IngredientsProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </CacheProvider>
+    </Provider>
   );
 }
 

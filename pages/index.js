@@ -1,22 +1,50 @@
-import * as React from 'react';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import ProTip from '../src/ProTip';
-import Link from '../src/Link';
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/client';
+import { Box, Container, Typography } from '@mui/material';
 
-export default function Index() {
+export default function Index({ user }) {
+  const { push } = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      push('/list/ingredients');
+    }
+  }, [user]);
+
   return (
     <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Next.js v5 example
+      <Box sx={{ mt: 8 }}>
+        <Typography variant="h5" component="h1" color="grey.800" gutterBottom>
+          {`Welcome ${user.name}!`}
         </Typography>
-        <Link href="/about" color="secondary">
-          Go to the about page
-        </Link>
-        <ProTip />
+        <Typography variant="subtitle1" component="span" color="grey.A700" gutterBottom>
+          Redirecting...
+        </Typography>
       </Box>
     </Container>
   );
+}
+Index.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/sign-in',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {
+      user: session.user,
+    },
+  };
 }
