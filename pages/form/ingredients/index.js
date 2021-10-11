@@ -11,7 +11,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import HMTextField from '../../../src/components/forms/HMTextField';
+import TextFieldHM from '../../../src/components/forms/TextFieldHM';
 import { useIngredients } from '../../../src/provider/IngredientsContext';
 // import TextArea from '../../../src/components/forms/TextArea';
 
@@ -90,7 +90,7 @@ export default function Ingredients() {
           </Box>
           <Grid spacing={2} container>
             <Grid xs={12} md={6} item>
-              <HMTextField
+              <TextFieldHM
                 label="Name"
                 id="name"
                 formik={formik}
@@ -98,7 +98,7 @@ export default function Ingredients() {
               />
             </Grid>
             <Grid xs={12} md={6} item>
-              <HMTextField
+              <TextFieldHM
                 label="Type"
                 id="type"
                 formik={formik}
@@ -116,10 +116,10 @@ export default function Ingredients() {
                     {option.label}
                   </MenuItem>
                 ))}
-              </HMTextField>
+              </TextFieldHM>
             </Grid>
             <Grid xs={12} md={6} item>
-              <HMTextField
+              <TextFieldHM
                 label="Quantity"
                 id="quantity"
                 formik={formik}
@@ -127,7 +127,7 @@ export default function Ingredients() {
               />
             </Grid>
             <Grid xs={12} md={6} item>
-              <HMTextField
+              <TextFieldHM
                 label="Base Unit"
                 id="baseUnit"
                 formik={formik}
@@ -135,7 +135,7 @@ export default function Ingredients() {
               />
             </Grid>
             <Grid xs={12} md={6} item>
-              <HMTextField
+              <TextFieldHM
                 label="Value"
                 id="value"
                 formik={formik}
@@ -143,7 +143,7 @@ export default function Ingredients() {
               />
             </Grid>
             <Grid xs={12} item>
-              <HMTextField
+              <TextFieldHM
                 label="Observation"
                 id="observation"
                 formik={formik}
