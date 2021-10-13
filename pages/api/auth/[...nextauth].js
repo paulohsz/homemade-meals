@@ -6,9 +6,14 @@ import User from '../../../src/api/models/User';
 
 export default NextAuth({
   // Configure JWT
+  jwt: {
+    // encryption: true,
+    // secret: process.env.JWT_SECRET,
+    signingKey: process.env.JWT_SIGNING_KEY,
+    // encryptionKey: process.env.JWT_ENCRYPTION_KEY,
+  },
   session: {
     jwt: true,
-    signingKey: process.env.JWT_SIGNING_PRIVATE_KEY,
   },
   // Specify Provider
   providers: [
