@@ -13,6 +13,7 @@ import theme from '../src/theme';
 import createEmotionCache from '../src/createEmotionCache';
 import { IngredientsProvider } from '../src/provider/IngredientsContext';
 import Menu from '../src/components/Menu';
+import ProgressLinear from '../src/components/commons/ProgressLinear';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -38,6 +39,7 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
             maxSnack={3}
           >
             <IngredientsProvider>
+              <ProgressLinear />
               <Menu />
               <Component {...pageProps} />
             </IngredientsProvider>
