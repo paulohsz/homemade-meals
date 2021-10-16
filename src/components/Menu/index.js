@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/client';
-import PropTypes from 'prop-types';
 import {
   AppBar,
   Toolbar,
@@ -21,8 +20,8 @@ import {
 } from '@mui/material';
 import { AccountCircle, Logout, Menu as MenuIcon } from '@mui/icons-material';
 
-function Menu({ router }) {
-  const { pathname, push } = router;
+function Menu() {
+  const { pathname, push } = useRouter();
 
   const menu = [
     { label: 'Ingredients', value: '/list/ingredients' },
@@ -175,7 +174,7 @@ function Menu({ router }) {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={() => { push('/profile/update-password'); handleClose(); }}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <Divider />
         <MenuItem onClick={async () => { await signOut({ redirect: false }); push('/auth/sign-in'); handleClose(); }}>
@@ -190,11 +189,4 @@ function Menu({ router }) {
   );
 }
 
-export default withRouter(Menu);
-
-Menu.propTypes = {
-  router: PropTypes.shape({
-    pathname: PropTypes.string.isRequired,
-    push: PropTypes.func.isRequired,
-  }).isRequired,
-};
+export default Menu;
