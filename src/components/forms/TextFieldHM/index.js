@@ -1,8 +1,9 @@
+/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  TextField, IconButton, InputAdornment,
+  TextField, IconButton, InputAdornment, Collapse,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -17,6 +18,32 @@ function TextFieldHM({
 }) {
   const [showPassword, setShowPassword] = useState(false); // Hide or show password
 
+  const [showError, setShowError] = useState({
+    flag: false,
+    text: '',
+  });
+
+  useEffect(() => {
+    let isMount = true;
+    if (formik?.touched[id] && Boolean(formik?.errors[id])) {
+      if (isMount) {
+        setShowError({
+          flag: true,
+          text: formik?.errors[id],
+        });
+      }
+    } else if (isMount && showError.flag === true) {
+      setTimeout(() => setShowError({
+        flag: false,
+        text: '',
+      }),
+      150);
+    }
+    return () => {
+      isMount = false;
+    };
+  }, [formik?.touched[id], formik?.errors[id], formik?.submitCount]);
+
   return (
     <TextField
       id={id}
@@ -28,15 +55,17 @@ function TextFieldHM({
         value: formik.values[id],
         onChange: formik.handleChange,
         onBlur: formik.handleBlur,
-        error: formik.touched[id] && Boolean(formik.errors[id]),
-        helperText: formik.touched[id] && formik.errors[id],
+        error: showError.flag,
+        helperText: <Collapse in={formik.touched[id] && Boolean(formik.errors[id])}>{showError.text}</Collapse>,
+        FormHelperTextProps: { component: 'div' },
       })}
       {...(formik && select && {
         value: formik.values[id],
         onChange: (e) => formik.setFieldValue(id, e.target.value),
         onBlur: () => formik.setTouched({ ...formik.touched, [id]: true }),
-        error: formik.touched[id] && Boolean(formik.errors[id]),
-        helperText: formik.touched[id] && formik.errors[id],
+        error: showError.flag,
+        helperText: <Collapse in={formik.touched[id] && Boolean(formik.errors[id])}>{showError.text}</Collapse>,
+        FormHelperTextProps: { component: 'div' },
       })}
       // if the password parameter is passed, add icons to hide / show the text
       {...(password && {
