@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-escape */
+import { hash } from 'bcryptjs';
 import mongoose from 'mongoose';
 
 const validateEmail = (email) => {
@@ -28,8 +29,7 @@ const UserSchema = new mongoose.Schema({
   password: {
     /* The password of this user */
     type: String,
-    required: [true, 'Please provide a password for this user'],
-    // maxlength: [120, 'Name cannot be more than 120 characters'],
+    // required: [true, 'Please provide a password for this user'],
   },
   observation: {
     /* The observation of your user */
@@ -38,6 +38,19 @@ const UserSchema = new mongoose.Schema({
 },
 {
   timestamps: true,
+});
+
+UserSchema.pre('save', async function save(next) {
+  const user = this;
+  if (this.isModified('password')) user.password = await hash(user.password, 12);
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', async function findOneAndUpdate(next) {
+  const query = this;
+  const update = query.getUpdate();
+  if (update.password) update.password = await hash(update.password, 12);
+  next();
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
