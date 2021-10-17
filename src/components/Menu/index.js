@@ -25,6 +25,7 @@ function Menu() {
 
   const menu = [
     { label: 'Ingredients', value: '/list/ingredients' },
+    { label: 'Users', value: '/list/users' },
     { label: 'About', value: '/about' },
   ];
 
@@ -34,6 +35,7 @@ function Menu() {
   const profileOpen = Boolean(anchorEl);
 
   const handleClose = () => {
+    setMenuActive(false);
     setAnchorEl(null);
   };
 
@@ -169,7 +171,7 @@ function Menu() {
         id="basic-menu"
         anchorEl={anchorEl}
         open={profileOpen}
-        onClose={handleClose}
+        onClose={() => setAnchorEl(null)}
         MenuListProps={{
           'aria-labelledby': 'basic-button',
         }}

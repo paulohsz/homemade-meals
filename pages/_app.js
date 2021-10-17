@@ -12,6 +12,7 @@ import axios from 'axios';
 import theme from '../src/theme';
 import createEmotionCache from '../src/createEmotionCache';
 import { IngredientsProvider } from '../src/provider/IngredientsContext';
+import { UsersProvider } from '../src/provider/UsersContext';
 import Menu from '../src/components/Menu';
 import ProgressLinear from '../src/components/commons/ProgressLinear';
 
@@ -39,9 +40,11 @@ export default function MyApp({ Component, emotionCache = clientSideEmotionCache
             maxSnack={3}
           >
             <IngredientsProvider>
-              <ProgressLinear />
-              <Menu />
-              <Component {...pageProps} />
+              <UsersProvider>
+                <ProgressLinear />
+                <Menu />
+                <Component {...pageProps} />
+              </UsersProvider>
             </IngredientsProvider>
           </SnackbarProvider>
         </ThemeProvider>

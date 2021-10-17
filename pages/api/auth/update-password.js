@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/client';
-import { hash, compare } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import * as Yup from 'yup';
 import dbConnect from '../../../src/api/utils/dbConnect';
 import User from '../../../src/api/models/User';
@@ -42,7 +42,7 @@ async function handler(req, res) {
                 .status(422)
                 .json({ success: false, errors: { passwordCurrent: ['Current password is wrong'] } });
             } else {
-              if (value.password) user.password = await hash(value.password, 12);
+              if (value.password) user.password = value.password;
               if (value.name) user.name = value.name;
               if (value.observation) user.observation = value.observation;
               if (value.password || value.name || value.observation) {
