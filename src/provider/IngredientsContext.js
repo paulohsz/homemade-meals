@@ -4,20 +4,26 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { useSnackbar } from 'notistack';
+import { useSession } from 'next-auth/client';
 import { ingredientGetAll } from '../services/ingredientsService';
+import usePrevious from '../utils/usePrevious';
 
 export const IngredientsContext = createContext();
 
 export const IngredientsProvider = ({ children }) => {
+  const [session] = useSession();
   const [ingredients, setIngredients] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
+
+  const prevSession = usePrevious(session);
 
   useEffect(() => {
     // const setingredientsStorage = localStorage.setItem('ingredients', JSON.stringify(data));
     // const getingredientsStorage = localStorage.getItem('ingredients');
     // const destroyingredientsStorage = localStorage.removeItem('ingredients');
-    if (ingredients.length === 0) {
+    if (ingredients.length === 0 && session && Boolean(session) !== Boolean(prevSession)) {
+      setIsLoading(true);
       ingredientGetAll()
         .then((res) => setIngredients(res))
         .catch((error) => {
@@ -36,9 +42,10 @@ export const IngredientsProvider = ({ children }) => {
         .finally(() => setIsLoading(false));
       console.log('ContextIngredient');
     } else {
-      setIsLoading(false);
+      if (!session) setIngredients([]);
+      if (prevSession === undefined) setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const deleteIngredient = (id) => {
     const ingredientsNew = ingredients.map((item) => (item._id === id ? { ...item, delete: true } : item));// eslint-disable-line max-len
