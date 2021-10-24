@@ -12,13 +12,13 @@ import {
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { withRouter } from 'next/router';
 import { useIngredients } from '../../../src/provider/IngredientsContext';
 import TextFieldHM from '../../../src/components/forms/TextFieldHM';
 import IngredientForm from '../../../src/forms/ingredientForm';
 import { ingredientDelete } from '../../../src/services/ingredientsService';
-import Loading from '../../../src/components/commons/Loading';
 import DialogDelete from '../../../src/components/commons/dialog/dialogDelete';
+import websitePageHOC from '../../../src/components/wrappers/WebsitePage/hoc';
+import { useWebsitePage } from '../../../src/provider/WebsitePageContext';
 
 // eslint-disable-next-line arrow-body-style
 const GridRow = styled(Grid)(({ theme }) => {
@@ -47,11 +47,12 @@ Button2.defaultProps = {
 
 function Ingredients() {
   const { ingredients, deleteIngredient, loadingIngr } = useIngredients();
+  const { toggleModalLoading } = useWebsitePage();
   const [ingr, setIngr] = useState([]);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const [ingrForm, setIngrForm] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+
   const [openX, setOpenX] = useState(false);
   const [modalDelete, setModalDelete] = useState({
     values: null,
@@ -75,7 +76,7 @@ function Ingredients() {
   };
   const onDelete = (id) => {
     setOpenX(false);
-    setIsLoading(true);
+    toggleModalLoading(true);
     ingredientDelete(id)
       .then((res) => {
         if (res.status === 200) {
@@ -84,12 +85,12 @@ function Ingredients() {
         }
       })
       .finally(() => {
-        setIsLoading(false);
+        toggleModalLoading(false);
       });
   };
   const onClose = () => {
     setOpenX(false);
-    setIsLoading(false);
+    toggleModalLoading(false);
     setModalDelete({ values: null });
   };
 
@@ -184,7 +185,7 @@ function Ingredients() {
             Loading...
           </Box>
         </Collapse>
-        <Collapse in={!loadingIngr && ingr.length === 0}>
+        <Collapse in={!loadingIngr && ingredients.length === 0}>
           <Box
             sx={{
               display: 'flex',
@@ -270,7 +271,6 @@ function Ingredients() {
         ))}
       </Container>
       <IngredientForm open={open} onClose={handleCloseForm} ingr={ingrForm} />
-      <Loading open={isLoading} />
       <DialogDelete
         open={openX}
         onClose={onClose}
@@ -280,7 +280,13 @@ function Ingredients() {
   );
 }
 
-export default withRouter(Ingredients);
+export default websitePageHOC(Ingredients, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'Ingredients',
+    },
+  },
+});
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx);

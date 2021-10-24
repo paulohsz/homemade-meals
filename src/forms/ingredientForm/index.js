@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,8 +18,8 @@ import { useSnackbar } from 'notistack';
 import TextFieldHM from '../../components/forms/TextFieldHM';
 import { useIngredients } from '../../provider/IngredientsContext';
 import { ingredientCreate, ingredientEdit } from '../../services/ingredientsService';
-import Loading from '../../components/commons/Loading';
 import { baseUnit, types } from '../../utils/staticTables';
+import { useWebsitePage } from '../../provider/WebsitePageContext';
 
 const ingredient = Yup.object().shape({
   name: Yup.string().required(),
@@ -32,7 +32,7 @@ const ingredient = Yup.object().shape({
 
 export default function IngredientForm({ ingr, open, onClose }) {
   const { ingredients, addIngredient, updateIngredient } = useIngredients();
-  const [isLoading, setIsLoading] = useState(false);
+  const { toggleModalLoading } = useWebsitePage();
   const { enqueueSnackbar } = useSnackbar();
 
   const formik = useFormik({
@@ -47,7 +47,7 @@ export default function IngredientForm({ ingr, open, onClose }) {
     },
     validationSchema: ingredient,
     onSubmit: ({ _id, ...values }) => {
-      setIsLoading(true);
+      toggleModalLoading(true);
       if (_id === '') {
         const errorCreate = () => {
           enqueueSnackbar('Something is wrong when created ingredient', { variant: 'error' });
@@ -63,7 +63,7 @@ export default function IngredientForm({ ingr, open, onClose }) {
               enqueueSnackbar('Something is wrong when created ingredient', { variant: 'error' });
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => toggleModalLoading(false));
       } else {
         const errorEdit = () => {
           enqueueSnackbar('Something is wrong when update ingredient', { variant: 'error' });
@@ -78,7 +78,7 @@ export default function IngredientForm({ ingr, open, onClose }) {
               enqueueSnackbar('Something is wrong when update ingredient', { variant: 'error' });
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => toggleModalLoading(false));
       }
     },
     validate: (values) => {
@@ -194,8 +194,6 @@ export default function IngredientForm({ ingr, open, onClose }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Loading open={isLoading} />
       {/* ingredients.map((ingredient_) => <div key={ingredient_.name}>{ingredient_.name}</div>) */}
     </>
   );

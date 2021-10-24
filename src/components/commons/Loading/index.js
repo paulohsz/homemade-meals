@@ -1,22 +1,16 @@
 import React from 'react';
 import { Backdrop, CircularProgress } from '@mui/material';
-import PropTypes from 'prop-types';
+import { useWebsitePage } from '../../../provider/WebsitePageContext';
 
-export default function Loading({ open, onClose }) {
+export default function Loading() {
+  const { isModalLoading } = useWebsitePage();
+
   return (
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
-      open={open}
-      onClick={onClose}
+      open={isModalLoading}
     >
       <CircularProgress color="inherit" />
     </Backdrop>
   );
 }
-Loading.defaultProps = {
-  onClose: () => {},
-};
-Loading.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func,
-};

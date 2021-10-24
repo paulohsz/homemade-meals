@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
 import { useFormik } from 'formik';
@@ -8,7 +8,8 @@ import { useSnackbar } from 'notistack';
 import TextFieldHM from '../../src/components/forms/TextFieldHM';
 import ButtonHM from '../../src/components/forms/ButtonHM';
 import { userUpdate } from '../../src/services/user';
-import Loading from '../../src/components/commons/Loading';
+import websitePageHOC from '../../src/components/wrappers/WebsitePage/hoc';
+import { useWebsitePage } from '../../src/provider/WebsitePageContext';
 
 const login = Yup.object().shape({
   name: Yup.string().required('Name is required'),
@@ -24,9 +25,10 @@ const login = Yup.object().shape({
   }),
 });
 
-export default function SignIn() {
+function UpdatePassword() {
   const { push } = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const { toggleModalLoading } = useWebsitePage();
 
   const [session, loading] = useSession();
 
@@ -35,8 +37,6 @@ export default function SignIn() {
       push('/');
     }
   }, [session]);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -55,63 +55,62 @@ export default function SignIn() {
         enqueueSnackbar('Something is wrong when update', { variant: 'error' });
       };
 
-      setIsLoading(true);
+      toggleModalLoading(true);
       userUpdate(form, errorMessage)
         .then((res) => {
           if (res.data.success) {
             enqueueSnackbar('Updated user', { variant: 'success' });
           }
         })
-        .finally(() => setIsLoading(false));
+        .finally(() => toggleModalLoading(false));
     },
     enableReinitialize: true,
   });
 
   return (
-    <>
-      <Container maxWidth="md">
-        <Typography variant="h4" component="h1" color="grey.800">
-          Change your password
-        </Typography>
-        <form id="form-update-password" onSubmit={formik.handleSubmit}>
-          <Grid sx={{ my: 3 }} spacing={3} container>
-            <Grid xs={12} item>
-              <TextFieldHM id="name" label="Name" formik={formik} fullWidth />
-            </Grid>
-            <Grid xs={4} item>
-              <TextFieldHM
-                id="passwordCurrent"
-                label="Current password"
-                formik={formik}
-                password
-                fullWidth
-              />
-            </Grid>
-            <Grid xs={4} item>
-              <TextFieldHM
-                id="password"
-                label="New password"
-                formik={formik}
-                password
-                fullWidth
-              />
-            </Grid>
-            <Grid xs={4} item>
-              <TextFieldHM
-                id="confirmPassword"
-                label="Confirm new password"
-                formik={formik}
-                password
-                fullWidth
-              />
-            </Grid>
-            <Grid sx={{ textAlign: 'right' }} xs={12} item>
-              <ButtonHM type="submit">Update</ButtonHM>
-            </Grid>
+    <Container maxWidth="md">
+      <Typography variant="h4" component="h1" color="grey.800">
+        Change your password
+      </Typography>
+      <form id="form-update-password" onSubmit={formik.handleSubmit}>
+        <Grid sx={{ my: 3 }} spacing={3} container>
+          <Grid xs={12} item>
+            <TextFieldHM id="name" label="Name" formik={formik} fullWidth />
           </Grid>
-        </form>
-      </Container>
-      <Loading open={isLoading} />
-    </>
+          <Grid xs={4} item>
+            <TextFieldHM
+              id="passwordCurrent"
+              label="Current password"
+              formik={formik}
+              password
+              fullWidth
+            />
+          </Grid>
+          <Grid xs={4} item>
+            <TextFieldHM
+              id="password"
+              label="New password"
+              formik={formik}
+              password
+              fullWidth
+            />
+          </Grid>
+          <Grid xs={4} item>
+            <TextFieldHM
+              id="confirmPassword"
+              label="Confirm new password"
+              formik={formik}
+              password
+              fullWidth
+            />
+          </Grid>
+          <Grid sx={{ textAlign: 'right' }} xs={12} item>
+            <ButtonHM type="submit">Update</ButtonHM>
+          </Grid>
+        </Grid>
+      </form>
+    </Container>
   );
 }
+
+export default websitePageHOC(UpdatePassword);

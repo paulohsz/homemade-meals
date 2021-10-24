@@ -4,17 +4,23 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { useSnackbar } from 'notistack';
+import { useSession } from 'next-auth/client';
 import { userGetAll } from '../services/usersService';
+import usePrevious from '../utils/usePrevious';
 
 export const UsersContext = createContext();
 
 export const UsersProvider = ({ children }) => {
+  const [session] = useSession();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
 
+  const prevSession = usePrevious(session);
+
   useEffect(() => {
-    if (users.length === 0) {
+    if (users.length === 0 && session && Boolean(session) !== Boolean(prevSession)) {
+      setIsLoading(true);
       userGetAll()
         .then((res) => setUsers(res))
         .catch((error) => {
@@ -33,9 +39,10 @@ export const UsersProvider = ({ children }) => {
         .finally(() => setIsLoading(false));
       console.log('ContextUser');
     } else {
-      setIsLoading(false);
+      if (!session) setUsers([]);
+      if (prevSession === undefined) setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const deleteUser = (id) => {
     const usersNew = users.map((item) => (item._id === id ? { ...item, delete: true } : item));
@@ -52,7 +59,7 @@ export const UsersProvider = ({ children }) => {
   return (
     <UsersContext.Provider value={{
       users,
-      loadingIngr: isLoading,
+      loadingUsers: isLoading,
       setUsers,
       addUser,
       deleteUser,
