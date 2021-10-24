@@ -25,7 +25,10 @@ function Home() {
 export default websitePageHOC(Home, {
   pageWrapperProps: {
     seoProps: {
-      headTitle: 'Perguntas Frequentes',
+      headTitle: 'Home',
+    },
+    authenticator: {
+      isRequired: false,
     },
   },
 });

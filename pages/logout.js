@@ -20,6 +20,9 @@ export default websitePageHOC(Logout, {
     seoProps: {
       headTitle: 'Logout',
     },
+    authenticator: {
+      isRequired: false,
+    },
     menuProps: {
       display: false,
     },

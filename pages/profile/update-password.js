@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import { useSession } from 'next-auth/client';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -26,17 +25,10 @@ const login = Yup.object().shape({
 });
 
 function UpdatePassword() {
-  const { push } = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const { toggleModalLoading } = useWebsitePage();
 
-  const [session, loading] = useSession();
-
-  useEffect(() => {
-    if (!session && !loading) {
-      push('/');
-    }
-  }, [session]);
+  const [session] = useSession();
 
   const formik = useFormik({
     initialValues: {
@@ -113,4 +105,13 @@ function UpdatePassword() {
   );
 }
 
-export default websitePageHOC(UpdatePassword);
+export default websitePageHOC(UpdatePassword, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'Profile - Update password',
+    },
+    authenticator: {
+      isRequired: true,
+    },
+  },
+});

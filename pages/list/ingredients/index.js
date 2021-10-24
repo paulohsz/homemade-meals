@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getSession } from 'next-auth/client';
 import {
   Box,
   Button,
@@ -285,24 +284,8 @@ export default websitePageHOC(Ingredients, {
     seoProps: {
       headTitle: 'Ingredients',
     },
+    authenticator: {
+      isRequired: true,
+    },
   },
 });
-
-export async function getServerSideProps(ctx) {
-  const session = await getSession(ctx);
-  // if no session found(user hasn’t logged in)
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/', // redirect user to homepage
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      session,
-    },
-  };
-}

@@ -28,5 +28,8 @@ export default websitePageHOC(About, {
     seoProps: {
       headTitle: 'About',
     },
+    authenticator: {
+      isRequired: true,
+    },
   },
 });
