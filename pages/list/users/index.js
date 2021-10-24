@@ -18,9 +18,10 @@ import { useUsers } from '../../../src/provider/UsersContext';
 import TextFieldHM from '../../../src/components/forms/TextFieldHM';
 import UserForm from '../../../src/forms/userForm';
 import { userDelete } from '../../../src/services/usersService';
-import Loading from '../../../src/components/commons/Loading';
 import DialogDelete from '../../../src/components/commons/dialog/dialogDelete';
 import ButtonHM from '../../../src/components/forms/ButtonHM';
+import websitePageHOC from '../../../src/components/wrappers/WebsitePage/hoc';
+import { useWebsitePage } from '../../../src/provider/WebsitePageContext';
 
 // eslint-disable-next-line arrow-body-style
 const GridRow = styled(Grid)(({ theme }) => {
@@ -43,19 +44,19 @@ const GridRow = styled(Grid)(({ theme }) => {
 });
 
 function Users() {
-  const { users, deleteUser, loadingIngr } = useUsers();
-  const [ingr, setIngr] = useState([]);
+  const { users, deleteUser, loadingUsers } = useUsers();
+  const { toggleModalLoading } = useWebsitePage();
+  const [usrs, setUsrs] = useState([]);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
-  const [ingrForm, setIngrForm] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [usrForm, setUsrForm] = useState({});
   const [openX, setOpenX] = useState(false);
   const [modalDelete, setModalDelete] = useState({
     values: null,
   });
 
   const funcSearch = (string) => {
-    setIngr(
+    setUsrs(
       users.map((item) => (item.search.indexOf(string.toLowerCase()) > -1
         ? { ...item, filter: true }
         : { ...item, filter: false })),
@@ -72,7 +73,7 @@ function Users() {
   };
   const onDelete = (id) => {
     setOpenX(false);
-    setIsLoading(true);
+    toggleModalLoading(true);
     userDelete(id)
       .then((res) => {
         if (res.status === 200) {
@@ -81,18 +82,18 @@ function Users() {
         }
       })
       .finally(() => {
-        setIsLoading(false);
+        toggleModalLoading(false);
       });
   };
   const onClose = () => {
     setOpenX(false);
-    setIsLoading(false);
+    toggleModalLoading(false);
     setModalDelete({ values: null });
   };
 
   const handleCloseForm = () => {
     setOpen(false);
-    setTimeout(() => setIngrForm({}), 200);
+    setTimeout(() => setUsrForm({}), 200);
   };
 
   return (
@@ -146,7 +147,7 @@ function Users() {
             Actions
           </Box>
         </Grid>
-        <Collapse in={loadingIngr}>
+        <Collapse in={loadingUsers}>
           <Box
             sx={{
               display: 'flex',
@@ -159,7 +160,7 @@ function Users() {
             Loading...
           </Box>
         </Collapse>
-        <Collapse in={!loadingIngr && ingr.length === 0}>
+        <Collapse in={!loadingUsers && users.length === 0}>
           <Box
             sx={{
               display: 'flex',
@@ -171,7 +172,7 @@ function Users() {
             No data on DB!
           </Box>
         </Collapse>
-        {ingr.map((user) => (
+        {usrs.map((user) => (
           <Collapse
             key={user._id}
             in={user.delete === undefined && user.filter}
@@ -201,7 +202,7 @@ function Users() {
                     aria-label="edit"
                     onClick={() => {
                       setOpen(true);
-                      setIngrForm(user);
+                      setUsrForm(user);
                     }}
                   >
                     <Edit />
@@ -218,8 +219,7 @@ function Users() {
           </Collapse>
         ))}
       </Container>
-      <UserForm open={open} onClose={handleCloseForm} ingr={ingrForm} />
-      <Loading open={isLoading} />
+      <UserForm open={open} onClose={handleCloseForm} usr={usrForm} />
       <DialogDelete
         open={openX}
         onClose={onClose}
@@ -229,7 +229,13 @@ function Users() {
   );
 }
 
-export default Users;
+export default websitePageHOC(Users, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'Users',
+    },
+  },
+});
 
 export async function getServerSideProps(ctx) {
   const session = await getSession(ctx);

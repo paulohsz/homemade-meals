@@ -11,13 +11,14 @@ import { Login } from '@mui/icons-material';
 import TextFieldHM from '../../src/components/forms/TextFieldHM';
 import ButtonHM from '../../src/components/forms/ButtonHM';
 import Logo from '../../src/components/svg/Logo';
+import websitePageHOC from '../../src/components/wrappers/WebsitePage/hoc';
 
 const login = Yup.object().shape({
   email: Yup.string().required(),
   password: Yup.string().required(),
 });
 
-export default function SignIn() {
+function SignIn() {
   const defaultMessage = {
     error: false,
     text: '',
@@ -125,3 +126,13 @@ export default function SignIn() {
     </Box>
   );
 }
+export default websitePageHOC(SignIn, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'Sign In',
+    },
+    menuProps: {
+      display: false,
+    },
+  },
+});

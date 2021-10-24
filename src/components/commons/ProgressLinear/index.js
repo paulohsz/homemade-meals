@@ -7,11 +7,13 @@ const ProgressLinear = () => {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    router.events.on('routeChangeStart', () => { setShow(true); });
-    router.events.on('routeChangeComplete', () => { setShow(false); });
-    router.events.on('routeChangeError', () => { setShow(false); });
+    let isMount = true;
+    router.events.on('routeChangeStart', () => { if (isMount) setShow(true); });
+    router.events.on('routeChangeComplete', () => { if (isMount) setShow(false); });
+    router.events.on('routeChangeError', () => { if (isMount) setShow(false); });
 
     return () => {
+      isMount = false;
       router.events.off('routeChangeStart', () => { setShow(true); });
       router.events.off('routeChangeComplete', () => { setShow(false); });
       router.events.off('routeChangeError', () => { setShow(false); });

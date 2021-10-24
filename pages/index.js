@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { Box, Container, Typography } from '@mui/material';
+import websitePageHOC from '../src/components/wrappers/WebsitePage/hoc';
 
-export default function Index() {
+function Index() {
   const [session] = useSession();
   const { push } = useRouter();
 
@@ -37,3 +38,11 @@ export default function Index() {
     </Container>
   );
 }
+
+export default websitePageHOC(Index, {
+  pageWrapperProps: {
+    menuProps: {
+      display: false,
+    },
+  },
+});

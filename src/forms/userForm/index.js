@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -16,31 +16,31 @@ import { useSnackbar } from 'notistack';
 import TextFieldHM from '../../components/forms/TextFieldHM';
 import { useUsers } from '../../provider/UsersContext';
 import { userCreate, userEdit } from '../../services/usersService';
-import Loading from '../../components/commons/Loading';
+import { useWebsitePage } from '../../provider/WebsitePageContext';
 
-const user = Yup.object().shape({
+const userYup = Yup.object().shape({
   name: Yup.string().required(),
   password: Yup.string(),
   email: Yup.string().required(),
   observation: Yup.string(),
 });
 
-export default function UserForm({ ingr, open, onClose }) {
+export default function UserForm({ usr, open, onClose }) {
   const { users, addUser, updateUser } = useUsers();
-  const [isLoading, setIsLoading] = useState(false);
+  const { toggleModalLoading } = useWebsitePage();
   const { enqueueSnackbar } = useSnackbar();
 
   const formik = useFormik({
     initialValues: {
-      _id: ingr._id ?? '',
-      name: ingr.name ?? '',
-      email: ingr.email ?? '',
+      _id: usr._id ?? '',
+      name: usr.name ?? '',
+      email: usr.email ?? '',
       password: '',
-      observation: ingr.observation ?? '',
+      observation: usr.observation ?? '',
     },
-    validationSchema: user,
+    validationSchema: userYup,
     onSubmit: ({ _id, ...values }) => {
-      setIsLoading(true);
+      toggleModalLoading(true);
       if (_id === '') {
         const errorCreate = () => {
           enqueueSnackbar('Something is wrong when created user', { variant: 'error' });
@@ -56,7 +56,7 @@ export default function UserForm({ ingr, open, onClose }) {
               enqueueSnackbar('Something is wrong when created user', { variant: 'error' });
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => toggleModalLoading(false));
       } else {
         const errorEdit = () => {
           enqueueSnackbar('Something is wrong when update user', { variant: 'error' });
@@ -71,7 +71,7 @@ export default function UserForm({ ingr, open, onClose }) {
               enqueueSnackbar('Something is wrong when update user', { variant: 'error' });
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => toggleModalLoading(false));
       }
     },
     validate: (values) => {
@@ -156,8 +156,6 @@ export default function UserForm({ ingr, open, onClose }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Loading open={isLoading} />
       {/* users.map((user_) => <div key={user_.name}>{user_.name}</div>) */}
     </>
   );
@@ -165,5 +163,5 @@ export default function UserForm({ ingr, open, onClose }) {
 UserForm.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  ingr: PropTypes.objectOf(PropTypes.any).isRequired,
+  usr: PropTypes.objectOf(PropTypes.any).isRequired,
 };

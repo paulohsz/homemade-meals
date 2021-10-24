@@ -2,10 +2,11 @@ import React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import websitePageHOC from '../src/components/wrappers/WebsitePage/hoc';
 import ProTip from '../src/ProTip';
 import Link from '../src/Link';
 
-export default function Index() {
+function Home() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
@@ -20,3 +21,11 @@ export default function Index() {
     </Container>
   );
 }
+
+export default websitePageHOC(Home, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'Perguntas Frequentes',
+    },
+  },
+});

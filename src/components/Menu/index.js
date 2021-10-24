@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/client';
 import {
   AppBar,
   Toolbar,
@@ -179,7 +178,7 @@ function Menu() {
         <MenuItem onClick={() => { push('/profile/update-password'); handleClose(); }}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <Divider />
-        <MenuItem onClick={async () => { await signOut({ redirect: false }); push('/auth/sign-in'); handleClose(); }}>
+        <MenuItem onClick={() => { push('/logout/'); handleClose(); }}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

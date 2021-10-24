@@ -5,8 +5,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ProTip from '../src/ProTip';
 import Link from '../src/Link';
+import websitePageHOC from '../src/components/wrappers/WebsitePage/hoc';
 
-export default function About() {
+function About() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
@@ -21,3 +22,11 @@ export default function About() {
     </Container>
   );
 }
+
+export default websitePageHOC(About, {
+  pageWrapperProps: {
+    seoProps: {
+      headTitle: 'About',
+    },
+  },
+});
