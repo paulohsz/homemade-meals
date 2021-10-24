@@ -131,6 +131,9 @@ export default websitePageHOC(SignIn, {
     seoProps: {
       headTitle: 'Sign In',
     },
+    authenticator: {
+      isRequired: false,
+    },
     menuProps: {
       display: false,
     },

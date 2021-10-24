@@ -44,5 +44,8 @@ export default websitePageHOC(Index, {
     menuProps: {
       display: false,
     },
+    authenticator: {
+      isRequired: false,
+    },
   },
 });

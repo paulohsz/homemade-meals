@@ -25,7 +25,13 @@ function Menu() {
   const menu = [
     { label: 'Ingredients', value: '/list/ingredients' },
     { label: 'Users', value: '/list/users' },
+    { label: 'Home', value: '/home' },
     { label: 'About', value: '/about' },
+  ];
+
+  const menuProfile = [
+    { label: 'Profile', value: '/profile/update-password' },
+    { label: 'My account' },
   ];
 
   const [menuActive, setMenuActive] = useState(false);
@@ -175,8 +181,18 @@ function Menu() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={() => { push('/profile/update-password'); handleClose(); }}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
+
+        {menuProfile.map((itemMenu, index) => (
+          <MenuItem
+            key={`pm_${index}_${itemMenu.value}`} // eslint-disable-line react/no-array-index-key
+            onClick={() => {
+              if (itemMenu.value) { push(itemMenu.value); }
+              handleClose();
+            }}
+          >
+            {itemMenu.label}
+          </MenuItem>
+        ))}
         <Divider />
         <MenuItem onClick={() => { push('/logout/'); handleClose(); }}>
           <ListItemIcon>
