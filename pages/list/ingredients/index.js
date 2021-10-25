@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Button,
-  Collapse,
   Container,
-  Grid,
   Typography,
-  IconButton,
-  CircularProgress,
 } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import { Add, Delete, Edit } from '@mui/icons-material';
 import { useIngredients } from '../../../src/provider/IngredientsContext';
 import TextFieldHM from '../../../src/components/forms/TextFieldHM';
 import IngredientForm from '../../../src/forms/ingredientForm';
@@ -18,31 +12,10 @@ import { ingredientDelete } from '../../../src/services/ingredientsService';
 import DialogDelete from '../../../src/components/commons/dialog/dialogDelete';
 import websitePageHOC from '../../../src/components/wrappers/WebsitePage/hoc';
 import { useWebsitePage } from '../../../src/provider/WebsitePageContext';
-
-// eslint-disable-next-line arrow-body-style
-const GridRow = styled(Grid)(({ theme }) => {
-  return {
-    borderRadius: theme.shape.borderRadius * 2,
-    alignItems: 'center',
-    padding: [theme.spacing(1), theme.spacing(2)].join(' '),
-    transition: theme.transitions.create(['background-color'], {
-      duration: theme.transitions.duration.shortest,
-      easing: theme.transitions.easing.easeInOut,
-    }),
-    '&:hover': {
-      backgroundColor: `${theme.palette.primary.main}20`,
-      transition: theme.transitions.create(['background-color'], {
-        duration: theme.transitions.duration.standard,
-        easing: theme.transitions.easing.easeIn,
-      }),
-    },
-  };
-});
-
-const Button2 = styled(Button)(() => ({}));
-Button2.defaultProps = {
-  variant: 'outlined',
-};
+import euroFormatter from '../../../src/utils/euroFormatter';
+import GridHM, { DeleteButton, ViewButton } from '../../../src/components/commons/GridHM';
+import ButtonHM from '../../../src/components/forms/ButtonHM';
+import Menu3Dots from '../../../src/components/commons/Menu3Dots';
 
 function Ingredients() {
   const { ingredients, deleteIngredient, loadingIngr } = useIngredients();
@@ -98,6 +71,87 @@ function Ingredients() {
     setTimeout(() => setIngrForm({}), 200);
   };
 
+  const ActionsRenderer = (ingredient) => {
+    const { _id } = ingredient;
+    const menuAction = [
+      {
+        _id,
+        button: ViewButton,
+        title: 'Edit',
+        label: 'edit',
+        onClick: () => {
+          setOpen(true);
+          setIngrForm(ingredient);
+        },
+        itemIcon: <Edit fontSize="small" />,
+      },
+      {
+        _id,
+        button: DeleteButton,
+        title: 'Delete',
+        label: 'delete',
+        onClick: () => onConfirmDelete(ingredient._id),
+        itemIcon: <Delete fontSize="small" />,
+      },
+    ];
+    return (
+      <>
+        <Box display={{ xs: 'none', sm: 'flex' }} justifyContent="space-evenly">
+          {menuAction.map((item) => {
+            const ButtonAction = item.button;
+            return (
+              <ButtonAction
+                key={`mb_${item.label}_${_id}`}
+                aria-label={item.label}
+                onClick={item.onClick}
+              />
+            );
+          })}
+        </Box>
+        <Box display={{ xs: 'block', sm: 'none' }}>
+          <Menu3Dots itemsMenu={menuAction} />
+        </Box>
+      </>
+    );
+  };
+
+  const columnCustomDefs = {
+    columns: [
+      {
+        headerName: 'Name',
+        field: 'name',
+        propsCell: { xs: 4, sm: 3 },
+      },
+      {
+        headerName: 'Quantity',
+        field: 'quantity',
+        propsCell: { xs: 3, sm: 2 },
+      },
+      {
+        headerName: 'Type',
+        field: 'type',
+        propsCell: { xs: 2, display: { xs: 'none', sm: 'block' } },
+      },
+      {
+        headerName: 'BaseUnit',
+        field: 'baseUnit',
+        propsCell: { xs: 2, display: { xs: 'none', sm: 'block' } },
+      },
+      {
+        headerName: 'Price',
+        field: 'price',
+        cellFunction: (data) => euroFormatter.format(data.price),
+        propsCell: { xs: 3, sm: 1 },
+      },
+      {
+        headerName: 'Action',
+        field: 'action',
+        cellFunction: ActionsRenderer,
+        propsCell: { xs: 2, textAlign: 'center' },
+      },
+    ],
+  };
+
   return (
     <>
       <Container maxWidth="md">
@@ -105,7 +159,9 @@ function Ingredients() {
           Ingredients
         </Typography>
         <Box sx={{ textAlign: 'end' }}>
-          <Button2 onClick={() => setOpen(true)}>Create</Button2>
+          <ButtonHM onClick={() => setOpen(true)} startIcon={<Add />}>
+            Ingredient
+          </ButtonHM>
         </Box>
         <Box my={3} mx={5}>
           <TextFieldHM
@@ -121,153 +177,12 @@ function Ingredients() {
             fullWidth
           />
         </Box>
-        <Grid sx={{ fontWeight: 500, px: 2, pb: 1 }} container>
-          <Box
-            component={Grid}
-            xs={4}
-            sm={3}
-            item
-          >
-            Name
-          </Box>
-          <Box
-            component={Grid}
-            xs={3}
-            sm={2}
-            item
-          >
-            Quantity
-          </Box>
-          <Box
-            component={Grid}
-            xs={2}
-            display={{ xs: 'none', sm: 'block' }}
-            item
-          >
-            Type
-          </Box>
-          <Box
-            component={Grid}
-            xs={2}
-            display={{ xs: 'none', sm: 'block' }}
-            item
-          >
-            BaseUnit
-          </Box>
-          <Box
-            component={Grid}
-            xs={3}
-            sm={1}
-            item
-          >
-            Price
-          </Box>
-          <Box
-            component={Grid}
-            xs={2}
-            style={{ textAlign: 'center' }}
-            item
-          >
-            Actions
-          </Box>
-        </Grid>
-        <Collapse in={loadingIngr}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              my: 4,
-            }}
-          >
-            <CircularProgress sx={{ mr: 2 }} />
-            Loading...
-          </Box>
-        </Collapse>
-        <Collapse in={!loadingIngr && ingredients.length === 0}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              my: 4,
-            }}
-          >
-            No data on DB!
-          </Box>
-        </Collapse>
-        {ingr.map((ingredient) => (
-          <Collapse
-            key={ingredient._id}
-            in={ingredient.delete === undefined && ingredient.filter}
-          >
-            <GridRow container>
-              <Box
-                component={Grid}
-                xs={4}
-                sm={3}
-                item
-              >
-                {ingredient.name}
-              </Box>
-              <Box
-                component={Grid}
-                xs={3}
-                sm={2}
-                item
-              >
-                {ingredient.quantity}
-              </Box>
-              <Box
-                component={Grid}
-                xs={2}
-                item
-                display={{ xs: 'none', sm: 'block' }}
-              >
-                {ingredient.type}
-              </Box>
-              <Box
-                component={Grid}
-                xs={2}
-                display={{ xs: 'none', sm: 'block' }}
-                item
-              >
-                {ingredient.baseUnit}
-              </Box>
-              <Box
-                component={Grid}
-                xs={3}
-                sm={1}
-                item
-              >
-                {`€ ${ingredient.price}`}
-              </Box>
-              <Box
-                component={Grid}
-                xs={2}
-                item
-              >
-                <Box display="flex" justifyContent="space-evenly">
-                  <IconButton
-                    aria-label="edit"
-                    onClick={() => {
-                      setOpen(true);
-                      setIngrForm(ingredient);
-                    }}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => onConfirmDelete(ingredient._id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Box>
-              </Box>
-            </GridRow>
-          </Collapse>
-        ))}
+        <GridHM
+          columnDefs={columnCustomDefs}
+          data={ingr}
+          loadingData={loadingIngr}
+          noRows={Boolean(!loadingIngr && ingredients.length === 0)}
+        />
       </Container>
       <IngredientForm open={open} onClose={handleCloseForm} ingr={ingrForm} />
       <DialogDelete

@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Collapse,
   Container,
-  Grid,
   Typography,
-  IconButton,
-  CircularProgress,
   Tooltip,
 } from '@mui/material';
 import {
   Add, Delete, Edit,
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
 import { useUsers } from '../../../src/provider/UsersContext';
 import TextFieldHM from '../../../src/components/forms/TextFieldHM';
 import UserForm from '../../../src/forms/userForm';
@@ -21,26 +16,8 @@ import DialogDelete from '../../../src/components/commons/dialog/dialogDelete';
 import ButtonHM from '../../../src/components/forms/ButtonHM';
 import websitePageHOC from '../../../src/components/wrappers/WebsitePage/hoc';
 import { useWebsitePage } from '../../../src/provider/WebsitePageContext';
-
-// eslint-disable-next-line arrow-body-style
-const GridRow = styled(Grid)(({ theme }) => {
-  return {
-    borderRadius: theme.shape.borderRadius * 2,
-    alignItems: 'center',
-    padding: [theme.spacing(1), theme.spacing(2)].join(' '),
-    transition: theme.transitions.create(['background-color'], {
-      duration: theme.transitions.duration.shortest,
-      easing: theme.transitions.easing.easeInOut,
-    }),
-    '&:hover': {
-      backgroundColor: `${theme.palette.primary.main}20`,
-      transition: theme.transitions.create(['background-color'], {
-        duration: theme.transitions.duration.standard,
-        easing: theme.transitions.easing.easeIn,
-      }),
-    },
-  };
-});
+import GridHM, { DeleteButton, ViewButton } from '../../../src/components/commons/GridHM';
+import Menu3Dots from '../../../src/components/commons/Menu3Dots';
 
 function Users() {
   const { users, deleteUser, loadingUsers } = useUsers();
@@ -95,6 +72,71 @@ function Users() {
     setTimeout(() => setUsrForm({}), 200);
   };
 
+  const ActionsRenderer = (user) => {
+    const { _id } = user;
+    const menuAction = [
+      {
+        _id,
+        button: ViewButton,
+        title: 'Edit',
+        label: 'edit',
+        onClick: () => {
+          setOpen(true);
+          setUsrForm(user);
+        },
+        itemIcon: <Edit fontSize="small" />,
+      },
+      {
+        _id,
+        button: DeleteButton,
+        title: 'Delete',
+        label: 'delete',
+        onClick: () => onConfirmDelete(user._id),
+        itemIcon: <Delete fontSize="small" />,
+      },
+    ];
+    return (
+      <>
+        <Box display={{ xs: 'none', sm: 'flex' }} justifyContent="space-evenly">
+          {menuAction.map((item) => {
+            const ButtonAction = item.button;
+            return (
+              <ButtonAction
+                key={`mb_${item.label}_${user._id}`}
+                aria-label={item.label}
+                onClick={item.onClick}
+              />
+            );
+          })}
+        </Box>
+        <Box display={{ xs: 'block', sm: 'none' }}>
+          <Menu3Dots itemsMenu={menuAction} />
+        </Box>
+      </>
+    );
+  };
+
+  const columnCustomDefs = {
+    columns: [
+      {
+        headerName: 'Name',
+        field: 'name',
+        propsCell: { xs: 10, sm: 6 },
+      },
+      {
+        headerName: 'Email',
+        field: 'email',
+        propsCell: { xs: false, sm: 4, display: { xs: 'none', sm: 'block' } },
+      },
+      {
+        headerName: 'Action',
+        field: 'action',
+        cellFunction: ActionsRenderer,
+        propsCell: { xs: 2, textAlign: 'center' },
+      },
+    ],
+  };
+
   return (
     <>
       <Container maxWidth="md">
@@ -122,101 +164,13 @@ function Users() {
             fullWidth
           />
         </Box>
-        <Grid sx={{ fontWeight: 500, px: 2, pb: 1 }} container>
-          <Box
-            component={Grid}
-            xs={6}
-            item
-          >
-            Name
-          </Box>
-          <Box
-            component={Grid}
-            xs={4}
-            item
-          >
-            Email
-          </Box>
-          <Box
-            component={Grid}
-            xs={2}
-            style={{ textAlign: 'center' }}
-            item
-          >
-            Actions
-          </Box>
-        </Grid>
-        <Collapse in={loadingUsers}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              my: 4,
-            }}
-          >
-            <CircularProgress sx={{ mr: 2 }} />
-            Loading...
-          </Box>
-        </Collapse>
-        <Collapse in={!loadingUsers && users.length === 0}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              my: 4,
-            }}
-          >
-            No data on DB!
-          </Box>
-        </Collapse>
-        {usrs.map((user) => (
-          <Collapse
-            key={user._id}
-            in={user.delete === undefined && user.filter}
-          >
-            <GridRow container>
-              <Box
-                component={Grid}
-                xs={6}
-                item
-              >
-                {user.name}
-              </Box>
-              <Box
-                component={Grid}
-                xs={4}
-                item
-              >
-                {user.email}
-              </Box>
-              <Box
-                component={Grid}
-                xs={2}
-                item
-              >
-                <Box display="flex" justifyContent="space-evenly">
-                  <IconButton
-                    aria-label="edit"
-                    onClick={() => {
-                      setOpen(true);
-                      setUsrForm(user);
-                    }}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => onConfirmDelete(user._id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Box>
-              </Box>
-            </GridRow>
-          </Collapse>
-        ))}
+
+        <GridHM
+          columnDefs={columnCustomDefs}
+          data={usrs}
+          loadingData={loadingUsers}
+          noRows={Boolean(!loadingUsers && users.length === 0)}
+        />
       </Container>
       <UserForm open={open} onClose={handleCloseForm} usr={usrForm} />
       <DialogDelete
