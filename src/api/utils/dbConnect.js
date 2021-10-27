@@ -16,12 +16,7 @@ async function dbConnect() {
   }
 
   // eslint-disable-next-line consistent-return
-  return mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
+  return mongoose.connect(process.env.MONGODB_URI);
 }
 
 export default dbConnect;
