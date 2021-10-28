@@ -54,14 +54,16 @@ function Menu() {
     setAnchorEl(event.currentTarget);
   };
 
-  const clickIcon = (value) => {
-    push(value);
+  const clickIcon = (value, delay = 0) => {
+    setTimeout(() => {
+      push(value);
+    }, delay);
     setMenuActive(value);
     setMenuSm(false);
   };
 
   const handleChangeTab = (event, newValue) => {
-    clickIcon(newValue);
+    clickIcon(newValue, 300);
   };
 
   const toggleDrawer = (open) => (event) => {
