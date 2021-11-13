@@ -4,126 +4,226 @@ import { useSession, signIn } from 'next-auth/client';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
-  Grid, Container, Box, Paper, SvgIcon, Divider, Collapse, Alert,
+  Grid,
+  Box,
+  Collapse,
+  Alert,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Login } from '@mui/icons-material';
+import { Lock, Login } from '@mui/icons-material';
+import axios from 'axios';
 import TextFieldHM from '../../src/components/forms/TextFieldHM';
 import ButtonHM from '../../src/components/forms/ButtonHM';
-import Logo from '../../src/components/svg/Logo';
 import websitePageHOC from '../../src/components/wrappers/WebsitePage/hoc';
+import Wrapper from './components/Wrapper';
 
 const login = Yup.object().shape({
-  email: Yup.string().required(),
-  password: Yup.string().required(),
+  email: Yup.string().required('The email is a required field'),
+  password: Yup.string().required('The password is a required field'),
+});
+const emailForgetValid = Yup.object().shape({
+  emailForget: Yup.string().required('The email is a required field'),
 });
 
 function SignIn() {
   const defaultMessage = {
+    show: false,
     error: false,
     text: '',
   };
+  const defaultForget = { show: false, sent: false };
 
   const [session] = useSession();
-  const { push } = useRouter();
+  const { push, query: { forgot } } = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isForget, setIsForget] = useState(defaultForget);
   const [message, setMessage] = useState(defaultMessage);
+
+  const goForgot = () => {
+    setMessage({ ...message, show: false });
+    setIsForget({ ...isForget, show: true });
+  };
+
   useEffect(() => {
     if (session) {
       push('/list/ingredients');
     }
   }, [session]);
+
+  useEffect(() => {
+    if (forgot === 'true') {
+      goForgot();
+    }
+  }, [forgot]);
+
+  const handleLogin = async (email, password) => {
+    const status = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+    if (status.error === null) {
+      setMessage({
+        show: true,
+        error: false,
+        text: 'Login Successful. Redirecting...',
+      });
+      push('/list/ingredients');
+    } else {
+      setIsLoading(false);
+      setMessage({
+        show: true,
+        error: true,
+        text: status.error,
+      });
+    }
+  };
+
+  const handleForget = async (emailForget) => {
+    axios.post('/api/auth/forget-password/', { email: emailForget })
+      .then(({ data }) => {
+        setIsLoading(false);
+        setIsForget({ ...isForget, sent: data.success });
+        setMessage({
+          show: true,
+          error: !data.success,
+          text: data.message,
+        });
+      });
+  };
+
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
+      emailForget: '',
     },
-    validationSchema: login,
-    onSubmit: async ({ email, password }) => {
-      setMessage(defaultMessage);
+    validationSchema: isForget.show ? emailForgetValid : login,
+    onSubmit: async ({ email, password, emailForget }) => {
+      setMessage({ ...message, show: false });
       setIsLoading(true);
-      const status = await signIn('credentials', {
-        redirect: false,
-        email,
-        password,
-      });
-      if (status.error === null) {
-        setMessage({
-          error: false,
-          text: 'Login Successful. Redirecting...',
-        });
-        push('/list/ingredients');
+      if (isForget.show) {
+        handleForget(emailForget);
       } else {
-        setIsLoading(false);
-        setMessage({
-          error: true,
-          text: status.error,
-        });
+        handleLogin(email, password);
       }
     },
   });
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      height="100vh"
+    <Wrapper
+      title={isForget.show ? 'Forgot Password' : 'Sign In'}
+      top={(
+        <Collapse in={message.show}>
+          <Alert
+            sx={{ mt: 2 }}
+            severity={message.error ? 'error' : 'success'}
+          >
+            {message.text}
+          </Alert>
+        </Collapse>
+      )}
     >
-      <Container maxWidth="xs">
-        <Paper elevation={5} sx={{ p: 2, my: 2, borderRadius: 4 }}>
-          <form id="form-signin" onSubmit={formik.handleSubmit}>
-            <Grid spacing={3} container>
-              <Grid xs={12} sx={{ textAlign: 'center' }} item>
-                <SvgIcon sx={{ fontSize: 65 }} color="primary">
-                  <Logo />
-                </SvgIcon>
-                <Divider sx={{ mt: 1 }}>
-                  <Box sx={{ fontWeight: 500, fontSize: 18, color: 'grey.A700' }}>
-                    Sign In
-                  </Box>
-                </Divider>
-                <Collapse in={!!message.text}>
-                  <Alert sx={{ mt: 2 }} severity={message.error ? 'error' : 'success'}>{message.text}</Alert>
-                </Collapse>
-              </Grid>
-              <Grid xs={12} item>
-                <TextFieldHM
-                  label="E-mail"
-                  id="email"
-                  placeholder="example@email.com"
-                  InputLabelProps={{ shrink: true }}
-                  formik={formik}
-                  fullWidth
-                />
-              </Grid>
-              <Grid xs={12} item>
-                <TextFieldHM
-                  label="Password"
-                  id="password"
-                  placeholder="******"
-                  InputLabelProps={{ shrink: true }}
-                  formik={formik}
-                  password
-                  fullWidth
-                />
-              </Grid>
-              <Grid xs={12} sx={{ textAlign: 'right' }} item>
-                <LoadingButton
-                  component={ButtonHM}
-                  loading={isLoading}
-                  loadingPosition="start"
-                  startIcon={<Login />}
-                  type="submit"
-                >
-                  Sign In
-                </LoadingButton>
-              </Grid>
+      <form id="form-signin" onSubmit={formik.handleSubmit}>
+        <Collapse in={!isForget.show}>
+          <Grid spacing={3} container>
+            <Grid xs={12} item>
+              <TextFieldHM
+                label="E-mail"
+                id="email"
+                sx={{ mt: 1 }}
+                placeholder="example@email.com"
+                InputLabelProps={{ shrink: true }}
+                formik={formik}
+                fullWidth
+              />
             </Grid>
-          </form>
-        </Paper>
-      </Container>
-    </Box>
+            <Grid xs={12} item>
+              <TextFieldHM
+                label="Password"
+                id="password"
+                placeholder="******"
+                InputLabelProps={{ shrink: true }}
+                formik={formik}
+                password
+                fullWidth
+              />
+            </Grid>
+            <Grid
+              xs={6}
+              container
+              alignContent="center"
+              sx={{
+                cursor: 'pointer',
+                color: 'grey.600',
+                fontSize: 14,
+                '&:hover': {
+                  color: 'grey.700',
+                  textDecoration: 'underline',
+                },
+              }}
+              onClick={() => goForgot()}
+              item
+            >
+              Forgot Password?
+            </Grid>
+            <Grid xs={6} sx={{ textAlign: 'right' }} item>
+              <LoadingButton
+                component={ButtonHM}
+                loading={isLoading}
+                loadingPosition="start"
+                startIcon={<Login />}
+                type="submit"
+              >
+                Sign In
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Collapse>
+        <Collapse in={isForget.show && !isForget.sent}>
+          <Grid spacing={3} container>
+            <Grid xs={12} item>
+              <TextFieldHM
+                label="E-mail"
+                id="emailForget"
+                sx={{ mt: 1 }}
+                placeholder="Your email"
+                InputLabelProps={{ shrink: true }}
+                formik={formik}
+                fullWidth
+              />
+            </Grid>
+            <Grid xs={4} item>
+              <ButtonHM onClick={() => setIsForget(defaultForget)}>
+                Cancel
+              </ButtonHM>
+            </Grid>
+            <Grid xs={8} sx={{ textAlign: 'right' }} item>
+              <LoadingButton
+                component={ButtonHM}
+                loading={isLoading}
+                loadingPosition="start"
+                startIcon={<Lock />}
+                type="submit"
+              >
+                Reset Password
+              </LoadingButton>
+            </Grid>
+          </Grid>
+        </Collapse>
+      </form>
+      <Collapse in={isForget.show && isForget.sent}>
+        <Box textAlign="center">
+          <ButtonHM onClick={() => {
+            setMessage({ ...message, show: false });
+            setIsForget(defaultForget);
+          }}
+          >
+            Sign In
+          </ButtonHM>
+        </Box>
+      </Collapse>
+    </Wrapper>
   );
 }
 export default websitePageHOC(SignIn, {

@@ -35,6 +35,15 @@ const UserSchema = new mongoose.Schema({
     /* The observation of your user */
     type: String,
   },
+  status: {
+    /* The observation of your user */
+    type: String,
+    enum: {
+      values: ['active', 'deactive'],
+      message: '{VALUE} is not supported',
+    },
+    default: 'active',
+  },
 },
 {
   timestamps: true,
