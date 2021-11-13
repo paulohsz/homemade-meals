@@ -1,4 +1,3 @@
-import { hash } from 'bcryptjs';
 import dbConnect from '../../../src/api/utils/dbConnect';
 import User from '../../../src/api/models/User';
 
@@ -33,7 +32,7 @@ async function handler(req, res) {
         {
           name,
           email,
-          password: await hash(password, 12),
+          password,
           observation,
         },
       );
