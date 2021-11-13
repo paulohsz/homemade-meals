@@ -127,6 +127,10 @@ function SignIn() {
                 placeholder="New password"
                 InputLabelProps={{ shrink: true }}
                 formik={formik}
+                password
+                inputProps={{
+                  autoComplete: 'new-password',
+                }}
                 fullWidth
               />
             </Grid>
@@ -138,6 +142,10 @@ function SignIn() {
                 placeholder="Confirm password"
                 InputLabelProps={{ shrink: true }}
                 formik={formik}
+                password
+                inputProps={{
+                  autoComplete: 'new-password',
+                }}
                 fullWidth
               />
             </Grid>
