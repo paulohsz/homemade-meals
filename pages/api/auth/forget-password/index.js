@@ -5,7 +5,7 @@ import UserToken from '../../../../src/api/models/UserToken';
 import { emailForget, textForget } from './components/emailForget';
 import dbConnect from '../../../../src/api/utils/dbConnect';
 
-export default async function handler(req, res) {
+export default async (req, res) => {
   const {
     body: { email },
     method,
@@ -45,6 +45,19 @@ export default async function handler(req, res) {
         };
 
       const transporter = nodemailer.createTransport(credentials);
+      await new Promise((resolve, reject) => {
+        // verify connection configuration
+        transporter.verify((error, success) => {
+          if (error) {
+            console.log(error);
+            reject(error);
+          } else {
+            console.log('Server is ready to take our messages');
+            resolve(success);
+          }
+        });
+      });
+
       const mailData = {
         from: process.env.GMAIL_EMAIL ?? 'from@example.com',
         to: email,
@@ -58,13 +71,17 @@ export default async function handler(req, res) {
         }],
       };
 
-      transporter.sendMail(mailData, (err, info) => {
-        if (err) {
-          console.log('Error 1-->', err); // eslint-disable-line no-console
-        } else {
-          console.log('Info 2-->', info); // eslint-disable-line no-console
-          console.log('Info 3-->', info.response); // eslint-disable-line no-console
-        }
+      await new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+        transporter.sendMail(mailData, (err, info) => {
+          if (err) {
+            console.log('Error 1-->', err); // eslint-disable-line no-console
+            reject(err);
+          } else {
+            console.log('Info 2-->', info); // eslint-disable-line no-console
+            console.log('Info 3-->', info.response); // eslint-disable-line no-console
+            resolve(info);
+          }
+        });
       });
     }
     res.status(200).json({ success: true, message: 'If your email belongs to an active account, a password reset email has been sent to it' });
@@ -76,4 +93,4 @@ export default async function handler(req, res) {
         message: 'Something is wrong, please try again',
       });
   }
-}
+};
