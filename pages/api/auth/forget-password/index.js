@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import path from 'path';
 import User from '../../../../src/api/models/User';
 import UserToken from '../../../../src/api/models/UserToken';
 import { emailForget, textForget } from './components/emailForget';
@@ -66,7 +67,7 @@ export default async (req, res) => {
         html: emailForget(foundUser?.name, URL, `${URL}auth/reset-password/${email}/${token}`),
         attachments: [{
           filename: 'logo-header.png',
-          path: `${process.cwd()}/pages/api/auth/forget-password/components/logo-header.png`,
+          path: path.join(process.cwd(), '/pages/api/auth/forget-password/components/logo-header.png'),
           cid: 'unique@logo', // same cid value as in the html img src
         }],
       };
