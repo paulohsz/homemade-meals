@@ -90,7 +90,7 @@ function Ingredients() {
         button: DeleteButton,
         title: 'Delete',
         label: 'delete',
-        onClick: () => onConfirmDelete(ingredient._id),
+        onClick: () => onConfirmDelete(_id),
         itemIcon: <Delete fontSize="small" />,
       },
     ];

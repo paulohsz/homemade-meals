@@ -91,7 +91,7 @@ function Users() {
         button: DeleteButton,
         title: 'Delete',
         label: 'delete',
-        onClick: () => onConfirmDelete(user._id),
+        onClick: () => onConfirmDelete(_id),
         itemIcon: <Delete fontSize="small" />,
       },
     ];
@@ -99,12 +99,13 @@ function Users() {
       <>
         <Box display={{ xs: 'none', sm: 'flex' }} justifyContent="space-evenly">
           {menuAction.map((item) => {
+            const { label, onClick } = item;
             const ButtonAction = item.button;
             return (
               <ButtonAction
-                key={`mb_${item.label}_${user._id}`}
-                aria-label={item.label}
-                onClick={item.onClick}
+                key={`mb_${label}_${_id}`}
+                aria-label={label}
+                onClick={onClick}
               />
             );
           })}
