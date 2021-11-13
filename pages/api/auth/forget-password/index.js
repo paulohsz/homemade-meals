@@ -19,7 +19,7 @@ export default async (req, res) => {
       // create token and save on DB
       const type = 'forget.password';
       const token = crypto.randomBytes(32).toString('hex');
-      const URL = process.env.VERCEL_URL ? `${process.env.VERCEL_URL}/` : process.env.NEXTAUTH_URL;
+      const URL = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/` : process.env.NEXTAUTH_URL;
       await UserToken.deleteMany({ email, type });
       await UserToken.create(
         {
