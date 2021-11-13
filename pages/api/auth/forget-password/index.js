@@ -19,7 +19,7 @@ export default async (req, res) => {
       // create token and save on DB
       const type = 'forget.password';
       const token = crypto.randomBytes(32).toString('hex');
-      const URL = process.env.VERCEL_URL ?? process.env.NEXTAUTH_URL;
+      const URL = process.env.VERCEL_URL ? `${process.env.VERCEL_URL}/` : process.env.NEXTAUTH_URL;
       await UserToken.deleteMany({ email, type });
       await UserToken.create(
         {
@@ -50,10 +50,10 @@ export default async (req, res) => {
         // verify connection configuration
         transporter.verify((error, success) => {
           if (error) {
-            console.log(error);
+            console.log(error); // eslint-disable-line no-console
             reject(error);
           } else {
-            console.log('Server is ready to take our messages');
+            console.log('Server is ready to take our messages'); // eslint-disable-line no-console
             resolve(success);
           }
         });
