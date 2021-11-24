@@ -93,7 +93,7 @@ export default function UserForm({ usr, open, onClose }) {
     <>
       <Dialog open={open} onClose={onClose} maxWidth="md" PaperProps={{ sx: { borderRadius: 4 } }}>
         <DialogTitle>
-          Create Users
+          {`${usr._id ? 'Update' : 'Create'} Users`}
           <IconButton
             aria-label="close"
             onClick={onClose}

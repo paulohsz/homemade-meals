@@ -100,7 +100,7 @@ export default function IngredientForm({ ingr, open, onClose }) {
     <>
       <Dialog open={open} onClose={onClose} maxWidth="md" PaperProps={{ sx: { borderRadius: 4 } }}>
         <DialogTitle>
-          Create Ingredients
+          {`${ingr._id ? 'Update' : 'Create'} Ingredients`}
           <IconButton
             aria-label="close"
             onClick={onClose}
