@@ -134,6 +134,7 @@ function Menu() {
                 size="large"
                 edge="end"
                 aria-haspopup="true"
+                aria-label="Profile Menu"
                 onClick={handleProfileMenuOpen}
               >
                 <AccountCircle />
