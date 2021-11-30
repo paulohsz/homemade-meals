@@ -51,7 +51,7 @@ function TextFieldHM({
       variant={variant}
       // if the formik was passed as a parameter add basic formik parameters
       {...(formik && !select && {
-        InputLabelProps: { shrink: !!formik.values[id] },
+        InputLabelProps: { shrink: !!formik.values[id] || formik.values[id] === 0 },
         value: formik.values[id],
         onChange: formik.handleChange,
         onBlur: formik.handleBlur,
@@ -77,6 +77,7 @@ function TextFieldHM({
                 onClick={() => setShowPassword(!showPassword)}
                 onMouseDown={(e) => e.preventDefault()}
                 edge="end"
+                aria-label="Show or hide the field"
               >
                 {showPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
