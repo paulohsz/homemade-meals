@@ -9,24 +9,24 @@
     "lint": "eslint --ignore-path .gitignore ."
   },
   "dependencies": {
-    "@emotion/cache": "^11.5.0",
-    "@emotion/react": "^11.5.0",
+    "@emotion/cache": "^11.6.0",
+    "@emotion/react": "^11.7.0",
     "@emotion/server": "^11.4.0",
-    "@emotion/styled": "^11.3.0",
-    "@mui/icons-material": "^5.0.5",
-    "@mui/lab": "^5.0.0-alpha.53",
-    "@mui/material": "^5.0.6",
-    "@mui/system": "^5.0.6",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.58",
+    "@mui/material": "^5.2.2",
+    "@mui/system": "^5.2.2",
     "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "clsx": "^1.1.1",
-    "date-fns": "^2.25.0",
+    "date-fns": "^2.27.0",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",
-    "mongoose": "^6.0.12",
-    "next": "^12.0.3",
+    "mongoose": "^6.0.14",
+    "next": "^12.0.4",
     "next-auth": "^3.29.0",
-    "nodemailer": "^6.7.0",
+    "nodemailer": "^6.7.2",
     "notistack": "^2.0.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -44,6 +44,6 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.4.1"
+    "prettier": "^2.5.0"
   }
 }
