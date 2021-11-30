@@ -174,6 +174,7 @@ function SignIn() {
                 loadingPosition="start"
                 startIcon={<Login />}
                 type="submit"
+                variant="contained"
               >
                 Sign In
               </LoadingButton>
