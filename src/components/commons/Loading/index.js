@@ -3,12 +3,12 @@ import { Backdrop, CircularProgress } from '@mui/material';
 import { useWebsitePage } from '../../../providers/WebsitePageContext';
 
 export default function Loading() {
-  const { isModalLoading } = useWebsitePage();
+  const { isLoading } = useWebsitePage();
 
   return (
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
-      open={isModalLoading}
+      open={isLoading}
     >
       <CircularProgress color="inherit" />
     </Backdrop>

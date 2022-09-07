@@ -6,12 +6,12 @@ import websitePageHOC from '../src/components/wrappers/WebsitePage/hoc';
 
 function Index() {
   const { data: session, status } = useSession();
-  const { push } = useRouter();
+  const { push, replace, ...ttt } = useRouter();
 
+  console.log("🚀 ~ file: index.tsx ~ line 12 ~ Index ~ status", ttt)
     if (status === 'authenticated') {
       push('/list/ingredients/');
     }
-  
 
     if (status === 'unauthenticated') {
       push('/auth/sign-in/');
