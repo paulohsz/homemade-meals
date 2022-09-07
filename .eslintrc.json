@@ -1,0 +1,42 @@
+{
+  "extends": [
+    "airbnb-typescript",
+    "react-app",
+    "prettier",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["**/tsconfig.json"]
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "@typescript-eslint/...": "off"
+      }
+    }
+  ],
+  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "spaced-comment": "error",
+    "quotes": ["error", "single"],
+    "import/no-duplicates": 1,
+    "@typescript-eslint/naming-convention": "off",
+    "prefer-destructuring": [
+      1,
+      {
+        "object": true,
+        "array": false
+      }
+    ]
+  }
+}

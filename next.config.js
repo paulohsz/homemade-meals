@@ -1,8 +1,5 @@
-const redirects = require('./config/redirects');
-
+/** @type {import('next').NextConfig} */
 module.exports = {
-  trailingSlash: true, // Put "/" last url [example 'localhost/faq' --> 'localhost/faq/' ]
-  async redirects() { // Redirects (Simple)
-    return redirects;
-  },
+  reactStrictMode: true,
+  trailingSlash: true,
 };
